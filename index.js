@@ -10,15 +10,21 @@ const cors = require('cors');
 //want to check it the git commit
 
 const frontendUrl=process.env.FRONTEND;
+console.log(frontendUrl);
+
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: `*`,
+    origin: `${frontendUrl}`,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials:true,
   }));
+
+app.options('*', cors()); // Handle preflight requests
+
 
 app.use(express.json());
 
