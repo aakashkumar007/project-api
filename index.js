@@ -10,8 +10,6 @@ const cors = require('cors');
 //want to check it the git commit
 
 const frontendUrl=process.env.FRONTEND;
-console.log(frontendUrl);
-
 
 const app = express();
 
@@ -35,10 +33,10 @@ app.use('/api/result', resultRoutes);
 app.use('/api/admit-card', admitCardRoutes);
 
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8000;
 
 app.get("/",(req,res)=>res.send("Welcome to job route"))
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
   console.log(`Server is running`); 
 });
