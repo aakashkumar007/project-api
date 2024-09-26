@@ -16,7 +16,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: `http://localhost:5173`,
+    origin: `https://project-client-d3eb.onrender.com`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials:true,
   }));
