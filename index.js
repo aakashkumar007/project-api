@@ -33,7 +33,7 @@ app.use('/api/result', resultRoutes);
 app.use('/api/admit-card', admitCardRoutes);
 
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 13935;
 
 app.get("/",(req,res)=>res.send("Welcome to job route"))
 
