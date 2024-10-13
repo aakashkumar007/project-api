@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { setupUser, loginUser } = require('../controller/UserController.JS');
+const { setupUser, loginUser } = require('../controller/UserController.js');
 
 // Route for setting up user (initial setup)
 router.post('/setup', setupUser);
