@@ -1,125 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db.js');
-const authenticateUser = require('../middleware/authMiddleWare.js'); // Import the middleware
+const authenticateUser = require('../middleware/authMiddleWare');
+const paginationMiddleware = require('../middleware/paginationMiddleWare');
+const {
+    createResult,
+    getResults,
+    getResultById,
+    updateResult,
+    deleteResult
+} = require('../controller/ResultController.js');
 
-// POST Results - Protected
-router.post('/post-results', authenticateUser, (req, res) => {
-    const { title, description } = req.body;
+// Create a new result (Protected route)
+router.post('/post-results', authenticateUser, createResult);
 
-    if (!title || !description) {
-        return res.status(400).json({
-            message: 'Job title and description required'
-        });
-    }
+// Get all results (Public route, with pagination)
+router.get('/get-results', paginationMiddleware, getResults);
 
-    const query = 'INSERT INTO result_listings (title, description) VALUES (?, ?)';
+// Get a single result by ID (Public route)
+router.get('/get-result/:id', getResultById);
 
-    db.query(query, [title, description], (err, results) => {
-        if (err) {
-            console.error('Error inserting result listing:', err);
-            return res.status(500).json({
-                message: 'Server error'
-            });
-        }
-        res.status(201).json({
-            id: results.insertId,
-            title,
-            description
-        });
-    });
-});
+// Update a result by ID (Protected route)
+router.put('/update-result/:id', authenticateUser, updateResult);
 
-// GET all Results - Public
-router.get('/get-results', (req, res) => {
-    const query = 'SELECT * FROM result_listings';
-
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching result listings:', err);
-            return res.status(500).json({
-                message: 'Server error'
-            });
-        }
-        res.json(results);
-    });
-});
-
-// GET single Result - Public
-router.get('/get-result/:id', (req, res) => {
-    const resultId = req.params.id;
-
-    const query = 'SELECT * FROM result_listings WHERE id = ?';
-
-    db.query(query, [resultId], (err, results) => {
-        if (err) {
-            console.error('Error fetching result listing:', err);
-            return res.status(500).json({
-                message: 'Server error'
-            });
-        }
-
-        if (results.length === 0) {
-            return res.status(404).json({
-                message: 'Result not found'
-            });
-        }
-        res.json(results[0]);
-    });
-});
-
-// DELETE Result - Protected
-router.delete('/delete-result/:id', authenticateUser, (req, res) => {
-    const resultId = req.params.id;
-
-    const query = 'DELETE FROM result_listings WHERE id = ?';
-
-    db.query(query, [resultId], (err, results) => {
-        if (err) {
-            console.error('Error deleting result listing:', err);
-            return res.status(500).json({
-                message: 'Server error'
-            });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({
-                message: 'Result not found'
-            });
-        }
-
-        res.json({
-            message: `Result with ID ${resultId} deleted successfully`
-        });
-    });
-});
-
-// UPDATE Result - Protected
-router.put('/update-result/:id', authenticateUser, (req, res) => {
-    const resultId = req.params.id;
-    const { title, description } = req.body;
-
-    if (!title || !description) {
-        return res.status(400).json({ message: 'Job title and description are required' });
-    }
-
-    const query = 'UPDATE result_listings SET title = ?, description = ? WHERE id = ?';
-    db.query(query, [title, description, resultId], (err, results) => {
-        if (err) {
-            console.error('Error updating result listing:', err);
-            return res.status(500).json({ message: 'Server error' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'Result not found' });
-        }
-
-        res.json({
-            message: `Result with ID ${resultId} updated successfully`,
-            title,
-            description
-        });
-    });
-});
+// Delete a result by ID (Protected route)
+router.delete('/delete-result/:id', authenticateUser, deleteResult);
 
 module.exports = router;
