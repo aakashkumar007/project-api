@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: project-api
+    runtime: node
+    repo: https://github.com/aakashkumar007/project-api
+    plan: free
+    envVars:
+      - key: FRONTEND
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        sync: false
+    region: singapore
+    buildCommand: npm install
+    startCommand: node index.js
+version: "1"
